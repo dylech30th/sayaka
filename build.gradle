@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+}
+
+group 'com.github.rinacm'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+sourceCompatibility = targetCompatibility = "11"
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "net.mamoe:mirai-core:1.3.1"
+    implementation "net.mamoe:mirai-core-qqandroid:1.3.1"
+    implementation "io.ktor:ktor-client-gson:1.3.2"
+    implementation "com.google.code.gson:gson:2.8.6"
+    implementation "org.reflections:reflections:0.9.12"
+    implementation "com.google.guava:guava:29.0-jre"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.github.rinacm.sayaka.SayakaKt'
+    }
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
