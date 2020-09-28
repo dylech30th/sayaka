@@ -11,6 +11,7 @@ config.txt
 crash-report/*.txt
 *.json
 *.jar
+gomoku/
 
 # User-specific stuff
 .idea/**/workspace.xml
