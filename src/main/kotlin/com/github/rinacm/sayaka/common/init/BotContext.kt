@@ -1,6 +1,8 @@
 package com.github.rinacm.sayaka.common.init
 
 import com.github.rinacm.sayaka.common.util.*
+import com.github.rinacm.sayaka.waifu.web.Session
+import kotlinx.coroutines.runBlocking
 import java.nio.file.Paths
 import java.time.LocalDateTime
 
@@ -12,6 +14,7 @@ object BotContext {
     private const val OWNER_PATH = "owner.txt"
     private const val ACCOUNT_CONFIGURATION_PATH = "config.txt"
     private const val CRASH_REPORT = "crash-report"
+    const val PIXIV_ACCOUNT_PATH = "pixiv.txt"
 
     fun getCrashReportPath(): String {
         return Paths.get(CRASH_REPORT, "ExceptionDump-${LocalDateTime.now().toString().replace(":", "-").replace(".", "-")}.txt").toAbsolutePath().toString()
@@ -66,5 +69,17 @@ object BotContext {
                 administrators.add(botOwner)
             }
         } else administrators = mutableSetOf(botOwner)
+    }
+
+    @TriggerOn(TriggerPoint.STARTUP)
+    @JvmStatic
+    fun pixivLogin() {
+        val text = if (File.exists(PIXIV_ACCOUNT_PATH)) {
+            File.read(PIXIV_ACCOUNT_PATH).get()
+        } else error("${PIXIV_ACCOUNT_PATH.toAbsolutePath()} must be created before use the bot")
+        val split = text.split(' ')
+        runBlocking {
+            Session.login(split[0].trim(), split[1].trim())
+        }
     }
 }

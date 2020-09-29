@@ -12,7 +12,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(SetPluginExcludeCommandTranslator::class, SetPluginExcludeCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(RegexValidator::class, "\\w+ $QQ_ID_REGEX (group|whisper)")
-@WithAuthorize(Authority.ADMINISTRATOR)
+@WithPrivilege(Privilege.ADMINISTRATOR)
 class SetPluginExcludeCommand(override val messageEvent: MessageEvent, val name: String, val id: String, val excludeType: ExcludeType) : Command {
     companion object Key : Command.Key<SetPluginExcludeCommand> {
         override val match: String = "/exclude"

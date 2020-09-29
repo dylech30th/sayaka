@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.rinacm.sayaka.common.util
 
 import java.util.*
@@ -7,6 +9,12 @@ enum class PlaceholderOption {
 }
 
 class Placeholder(private vararg val names: String, private val option: PlaceholderOption = PlaceholderOption.REQUIRED, private val repeatable: Boolean = false) {
+    constructor(
+        vararg placeholders: Placeholder,
+        option: PlaceholderOption = PlaceholderOption.REQUIRED,
+        repeatable: Boolean = false
+    ) : this(*placeholders.map(Placeholder::toString).toTypedArray(), option = option, repeatable = repeatable)
+
     companion object {
         val EMPTY: Placeholder = Placeholder(String.EMPTY, option = PlaceholderOption.EMPTY, repeatable = false)
     }
@@ -20,8 +28,8 @@ class Placeholder(private vararg val names: String, private val option: Placehol
                     PlaceholderOption.OPTIONAL -> "[${names[0]}${ellipsisIfRepeatable()}]"
                     PlaceholderOption.REQUIRED -> "<${names[0]}${ellipsisIfRepeatable()}>"
                     PlaceholderOption.MUTUALLY_EXCLUSIVE -> {
-                        requires<IllegalArgumentException>(names.size == 2 && !repeatable, "size of placeholder names must be 2 and repeatable must be false when ${PlaceholderOption.MUTUALLY_EXCLUSIVE} is set")
-                        "{${names[0]}|${names[1]}}"
+                        requires<IllegalArgumentException>(names.size > 1 && !repeatable, "size of placeholder names must be 2 and repeatable must be false when ${PlaceholderOption.MUTUALLY_EXCLUSIVE} is set")
+                        names.joinToString("|", "{", "}")
                     }
                     PlaceholderOption.ARRAY -> {
                         requires<java.lang.IllegalArgumentException>(names.size > 1 && !repeatable, "size of placeholder names must be greater than 1 and repeatable must be false when ${PlaceholderOption.ARRAY} is set")

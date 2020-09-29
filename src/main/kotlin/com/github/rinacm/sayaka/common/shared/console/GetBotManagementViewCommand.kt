@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(GetBotManagementViewCommandTranslator::class, GetBotManagementViewCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(PurePlainTextValidator::class)
-@WithAuthorize(Authority.ADMINISTRATOR)
+@WithPrivilege(Privilege.ADMINISTRATOR)
 class GetBotManagementViewCommand(override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<GetBotManagementViewCommand> {
         override val match: String = "/view"

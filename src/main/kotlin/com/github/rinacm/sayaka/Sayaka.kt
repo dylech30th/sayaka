@@ -13,9 +13,9 @@ fun main() = runBlocking {
     PreInit.prepared()
     val config = BotContext.getLoginConfiguration()
     BotFactory.login(config[0].toLong(), config[1])
-    with(Dispatcher.Default) {
-        BotFactory.getInstance().subscribeMessages {
-            always {
+    BotFactory.getInstance().subscribeMessages {
+        always {
+            with(Dispatcher.Global) {
                 launch {
                     try {
                         val msg = translateMessage()

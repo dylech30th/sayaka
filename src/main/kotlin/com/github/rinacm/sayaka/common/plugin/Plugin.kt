@@ -48,17 +48,7 @@ abstract class Plugin<T : Plugin<T>> {
                     appendLine("插件 ${pluginKey.canonicalizeName()}: ${pluginKey.description} ")
                     appendLineIndent("命令列表: ")
                     for (cmd in commands!!) {
-                        var str = "规范: ${cmd.canonicalizeName()} 用途: ${cmd.description}"
-                        with(cmd::class.java.declaringClass.annotations) {
-                            this.firstOrNull { it is WithAuthorize }?.run {
-                                val withAuthorize = this as WithAuthorize
-                                str += when (withAuthorize.authority) {
-                                    Authority.SUPERUSER -> " (该命令仅限Bot持有者)"
-                                    Authority.ADMINISTRATOR -> " (该命令仅限Bot管理员)"
-                                }
-                            }
-                        }
-                        appendLineIndent(str, indentLevel = 2)
+                        appendLineIndent(cmd.help(cmd), indentLevel = 2)
                     }
                 }
             }

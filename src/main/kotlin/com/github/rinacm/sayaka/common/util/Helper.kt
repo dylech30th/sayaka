@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.rinacm.sayaka.common.util
 
 import com.google.common.collect.Multimap
@@ -29,6 +31,10 @@ fun Path.mkdirs() = File(toString()).mkdirs()
 fun durationNow(): Duration = Duration.ofMillis(System.currentTimeMillis())
 
 fun <T> buildListImmutable(block: MutableList<T>.() -> Unit): List<T> {
+    return mutableListOf<T>().apply { block(this) }
+}
+
+fun <T> buildListMutable(block: MutableList<T>.() -> Unit): MutableList<T> {
     return mutableListOf<T>().apply { block(this) }
 }
 
@@ -71,14 +77,14 @@ suspend fun String.uploadAsImage(c: Contact): Image {
     return File(this).uploadAsImage(c)
 }
 
-fun MessageChain.interceptedAuthority(authority: Authority?): MessageChain {
-    return if (authority != null) {
-        "[# $authority RIGHTS GRANTED #]\n" followedBy (this + "\n[# $authority RIGHTS REVOKED #]")
+fun MessageChain.interceptedAuthority(privilege: Privilege?): MessageChain {
+    return if (privilege != null) {
+        "[# $privilege PRIVILEGE GRANTED #]\n" followedBy (this + "\n[# $privilege PRIVILEGE REVOKED #]")
     } else this
 }
 
-fun String.interceptedAuthority(authority: Authority?): MessageChain {
-    return asMessageChain().interceptedAuthority(authority)
+fun String.interceptedAuthority(privilege: Privilege?): MessageChain {
+    return asMessageChain().interceptedAuthority(privilege)
 }
 
 fun String.asMessageChain(): MessageChain {
@@ -86,6 +92,10 @@ fun String.asMessageChain(): MessageChain {
 }
 
 fun String.asSingleMessageChainList(): List<MessageChain> {
+    return asMessageChain().toSingleList()
+}
+
+fun Message.asSingleMessageChainList(): List<MessageChain> {
     return asMessageChain().toSingleList()
 }
 

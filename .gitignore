@@ -8,10 +8,12 @@
 
 owner.txt
 config.txt
+pixiv.txt
 crash-report/*.txt
 *.json
 *.jar
 gomoku/
+pixiv/
 
 # User-specific stuff
 .idea/**/workspace.xml

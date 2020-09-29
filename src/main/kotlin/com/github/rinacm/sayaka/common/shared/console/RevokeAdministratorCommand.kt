@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(RevokeAdministratorCommandTranslator::class, RevokeAdministratorCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(RegexValidator::class, QQ_ID_REGEX)
-@WithAuthorize(Authority.SUPERUSER)
+@WithPrivilege(Privilege.SUPERUSER)
 data class RevokeAdministratorCommand(val qqId: String, override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<RevokeAdministratorCommand> {
         override val match: String = "/revoke"

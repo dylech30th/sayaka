@@ -8,7 +8,7 @@ import com.github.rinacm.sayaka.common.shared.Command
 import com.github.rinacm.sayaka.common.util.*
 import net.mamoe.mirai.message.MessageEvent
 
-@WithAuthorize(Authority.ADMINISTRATOR)
+@WithPrivilege(Privilege.ADMINISTRATOR)
 @Contextual(MandatoryEndGameCommandTranslator::class, MandatoryEndGameCommandHandler::class)
 @PluginOwnership(GomokuPlugin::class)
 @Responding(RespondingType.GROUP)

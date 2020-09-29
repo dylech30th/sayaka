@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.rinacm.sayaka.common.util
 
 import java.time.Duration

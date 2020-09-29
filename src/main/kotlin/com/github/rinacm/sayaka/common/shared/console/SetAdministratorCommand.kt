@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(SetAdministratorCommandTranslator::class, SetAdministratorCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(RegexValidator::class, QQ_ID_REGEX)
-@WithAuthorize(Authority.SUPERUSER)
+@WithPrivilege(Privilege.SUPERUSER)
 data class SetAdministratorCommand(val qqId: String, override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<SetAdministratorCommand> {
         override val match: String = "/op"

@@ -1,5 +1,12 @@
 package com.github.rinacm.sayaka.gomoku
 
+/**
+ * Represents a piece in the chessboard, where [x] and [y] is the
+ * virtual coordinate, e.g. (1, a) (2, b)
+ * @param x the virtual x coordinate
+ * @param y the virtual y coordinate
+ * @param kind role of this piece ([Role.BLACK]/[Role.WHITE])
+ */
 data class Piece(val x: Int, val y: Int, val kind: Role) {
     companion object {
         private val invalid = Piece(-1, -1, Role.NONE)
@@ -41,11 +48,5 @@ enum class Role(val roleName: String) {
 
     override fun toString(): String {
         return roleName
-    }
-
-    fun toInt() = when (this) {
-        WHITE -> 0
-        BLACK -> 1
-        NONE -> -1
     }
 }

@@ -1,7 +1,7 @@
 package com.github.rinacm.sayaka.common.message.error
 
-import com.github.rinacm.sayaka.common.util.Authority
+import com.github.rinacm.sayaka.common.util.Privilege
 
-class AuthorizeException(requiredAuthority: Authority) : Exception() {
-    override val message: String? = "你没有执行该命令所需要的${requiredAuthority}权限"
+class AuthorizeException(requiredPrivilege: Privilege) : Exception() {
+    override val message: String? = "你没有执行该命令所需要的${requiredPrivilege}权限"
 }

@@ -96,7 +96,6 @@ class Game(val gameId: String) : Closeable {
 
     // --- BUNDLED/EXTERNAL UTILITIES ---
     private val stopWatch = StopWatch()
-    private val painterBridge = PainterBridge()
     private val judgement: Judgement
 
     // --- PLAYERS ---
@@ -209,9 +208,9 @@ class Game(val gameId: String) : Closeable {
         runBlocking {
             updateImagePath()
             if (::lastModified.isInitialized) {
-                painterBridge.drawPiece(imagePath, chessboard, lastModified)
+                Painter.save(imagePath, chessboard, lastModified)
             } else {
-                painterBridge.drawNew(imagePath)
+                Painter.save(imagePath)
             }
             delay(10)
         }
@@ -309,6 +308,5 @@ class Game(val gameId: String) : Closeable {
         player.black = String.EMPTY
         player.white = String.EMPTY
         stopWatch.stop()
-        painterBridge.close()
     }
 }

@@ -14,7 +14,9 @@ class GetGomokuCreditRankingCommandHandler : CommandHandler<GetGomokuCreditRanki
         val sortedList = GomokuCredit.get().filter {
             group.members.any { m -> m.id.toString() == it.player }
         }.sortedByDescending(PlayerCredit::credit).take(10)
-        return buildString {
+        return if (sortedList.isEmpty())
+            "该群暂时没有任何对局记录".asSingleMessageChainList()
+        else buildString {
             for (p in sortedList) {
                 appendLine("玩家: ${group[p.player.toLong()].nick} QQ: ${p.player} 点数: ${p.credit}")
             }

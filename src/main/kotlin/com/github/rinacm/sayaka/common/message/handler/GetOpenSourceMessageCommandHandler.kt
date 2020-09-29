@@ -8,7 +8,8 @@ import net.mamoe.mirai.message.data.MessageChain
 class GetOpenSourceMessageCommandHandler : CommandHandler<GetOpenSourceMessageCommand> {
     override suspend fun process(command: GetOpenSourceMessageCommand): List<MessageChain>? {
         return buildString {
-            appendLine("""
+            appendLine(
+                """
                 MIT License
 
                 Copyright (c) 2020 Dylech30th
@@ -30,7 +31,8 @@ class GetOpenSourceMessageCommandHandler : CommandHandler<GetOpenSourceMessageCo
                 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                 SOFTWARE.
-            """.trimIndent())
+            """.trimIndent()
+            )
         }.asSingleMessageChainList()
     }
 

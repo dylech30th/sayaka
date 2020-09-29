@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(SwitchPluginEnabledCommandTranslator::class, SwitchPluginEnabledCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(RegexValidator::class, "\\w+ (disable|enable)")
-@WithAuthorize(Authority.ADMINISTRATOR)
+@WithPrivilege(Privilege.ADMINISTRATOR)
 class SwitchPluginEnabledCommand(override val messageEvent: MessageEvent, val name: String, val enable: Boolean) : Command {
     companion object Key : Command.Key<SwitchPluginEnabledCommand> {
         @Suppress("SpellCheckingInspection")
@@ -19,7 +19,7 @@ class SwitchPluginEnabledCommand(override val messageEvent: MessageEvent, val na
         override val description: String = "关闭或开启一个插件"
 
         override fun canonicalizeName(): String {
-            return "$match ${Placeholder("plugin_name")} ${Placeholder("enabled", "disable", option = PlaceholderOption.MUTUALLY_EXCLUSIVE)}"
+            return "$match ${Placeholder("plugin_name")} ${Placeholder("enable", "disable", option = PlaceholderOption.MUTUALLY_EXCLUSIVE)}"
         }
     }
 }

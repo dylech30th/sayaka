@@ -1,6 +1,5 @@
 package com.github.rinacm.sayaka.common.shared
 
-import com.github.rinacm.sayaka.common.message.error.IrrelevantMessageException
 import com.github.rinacm.sayaka.common.message.validation.AuthorityValidator
 import com.github.rinacm.sayaka.common.message.validation.PurePlainTextValidator
 import com.github.rinacm.sayaka.common.message.validation.RegexValidator
@@ -27,14 +26,14 @@ object CommandFactory {
      * by [cmd] as the match key, if matches found then put them into a [commandKeywordToCommandClassCache] to
      * improve the query speed
      */
-    fun lookup(cmd: String): KClass<out Command> {
+    fun lookup(cmd: String): KClass<out Command>? {
         if (cmd in commandKeywordToCommandClassCache.keys) {
             return commandKeywordToCommandClassCache[cmd]!!
         }
         val obj = TypedSubclassesScanner.markedMap[Command::class]
             ?.firstOrNull { tryMatch(cmd, it.companionObjectInstance as Command.Key<*>?) }
             ?.companionObject
-            ?: throw IrrelevantMessageException()
+            ?: return null
         @Suppress("UNCHECKED_CAST")
         return (obj.java.declaringClass.kotlin as KClass<out Command>).apply {
             commandKeywordToCommandClassCache[cmd] = this
@@ -66,8 +65,8 @@ object CommandFactory {
         return RawCommand(substringBefore(' ').trim(), substringAfter(' ', String.EMPTY).trim().split("\\s+".toRegex()).joinToString(" "))
     }
 
-    fun KClass<out Command>.getAuthority(): Authority? {
-        return this.annotations.filterIsInstance<WithAuthorize>().firstOrNull()?.authority
+    fun KClass<out Command>.getAuthority(): Privilege? {
+        return this.annotations.filterIsInstance<WithPrivilege>().firstOrNull()?.privilege
     }
 
     fun checkAccess(cmdClass: KClass<out Command>, messageEvent: MessageEvent): Boolean {

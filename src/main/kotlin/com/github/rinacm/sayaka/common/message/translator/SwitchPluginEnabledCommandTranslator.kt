@@ -9,10 +9,12 @@ import net.mamoe.mirai.message.MessageEvent
 class SwitchPluginEnabledCommandTranslator : AbstractMessageTranslator<SwitchPluginEnabledCommand>() {
     override fun translate(rawInput: MessageEvent): SwitchPluginEnabledCommand {
         val parameters = defaultTrailingParameters(rawInput)
-        return SwitchPluginEnabledCommand(rawInput, parameters[0], when (parameters[1].toLowerCase()) {
-            "enabled" -> true
-            "disable" -> false
-            else -> throws<IrrelevantMessageException>()
-        })
+        return SwitchPluginEnabledCommand(
+            rawInput, parameters[0], when (parameters[1].toLowerCase()) {
+                "enable" -> true
+                "disable" -> false
+                else -> throws<IrrelevantMessageException>()
+            }
+        )
     }
 }

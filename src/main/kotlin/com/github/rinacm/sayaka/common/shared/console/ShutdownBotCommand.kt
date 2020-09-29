@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(ShutdownBotCommandTranslator::class, ShutdownBotCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @Validator(PurePlainTextValidator::class)
-@WithAuthorize(Authority.SUPERUSER)
+@WithPrivilege(Privilege.SUPERUSER)
 class ShutdownBotCommand(override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<ShutdownBotCommand> {
         override val match: String = "/shutdown"

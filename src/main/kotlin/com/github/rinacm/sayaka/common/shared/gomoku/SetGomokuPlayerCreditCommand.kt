@@ -8,7 +8,7 @@ import com.github.rinacm.sayaka.common.shared.Command
 import com.github.rinacm.sayaka.common.util.*
 import net.mamoe.mirai.message.MessageEvent
 
-@WithAuthorize(Authority.ADMINISTRATOR)
+@WithPrivilege(Privilege.ADMINISTRATOR)
 @Contextual(SetGomokuPlayerCreditCommandTranslator::class, SetGomokuPlayerCreditCommandHandler::class)
 @PluginOwnership(GomokuPlugin::class)
 @Validator(RegexValidator::class, "$QQ_ID_REGEX $QQ_ID_REGEX")

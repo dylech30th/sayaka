@@ -10,14 +10,14 @@ import net.mamoe.mirai.message.MessageEvent
 
 @Contextual(ShowHelpMessageCommandTranslator::class, ShowHelpMessageCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
-@Validator(RegexValidator::class, "(\\w+,*)*")
+@Validator(RegexValidator::class, "(/?[\\u4e00-\\u9fa5a-zA-Z0-9]+ *)*")
 class ShowHelpMessageCommand(override val messageEvent: MessageEvent, val names: List<String> = emptyList()) : Command {
     companion object Key : Command.Key<ShowHelpMessageCommand> {
         override val match: String = "/help"
         override val description: String = "查看Sayaka Bot™的使用说明"
 
         override fun canonicalizeName(): String {
-            return "$match ${Placeholder("plugin_name,", option = PlaceholderOption.OPTIONAL, repeatable = true)}"
+            return "$match ${Placeholder("plugin_name_or_command_name(with '/' prefix)", option = PlaceholderOption.OPTIONAL, repeatable = true)}"
         }
     }
 }

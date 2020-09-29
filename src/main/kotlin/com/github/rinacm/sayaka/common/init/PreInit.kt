@@ -1,5 +1,6 @@
 package com.github.rinacm.sayaka.common.init
 
+import com.github.rinacm.sayaka.common.message.factory.Dispatcher
 import com.github.rinacm.sayaka.common.plugin.Plugin
 import com.github.rinacm.sayaka.common.shared.Command
 import com.github.rinacm.sayaka.common.util.*
@@ -12,12 +13,13 @@ object PreInit {
     private fun registerVariablesGlobal() {
         TypedSubclassesScanner.registerScanner(ScanningTarget.CLASS, Command::class)
         TypedSubclassesScanner.registerScanner(ScanningTarget.CLASS, Plugin::class)
+        TypedSubclassesScanner.registerScanner(ScanningTarget.CLASS, Dispatcher::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.METHOD, TriggerOn::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, PluginOwnership::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, Contextual::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, PermanentlyDisable::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, Validator::class)
-        TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, WithAuthorize::class)
+        TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, WithPrivilege::class)
         TypedAnnotationScanner.registerScanner(ScanningTarget.CLASS, Responding::class)
     }
 

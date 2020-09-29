@@ -1,5 +1,6 @@
 package com.github.rinacm.sayaka.common.util
 
+import com.github.rinacm.sayaka.common.message.contextual.CommandHandler
 import com.github.rinacm.sayaka.common.message.contextual.MessageTranslator
 import com.github.rinacm.sayaka.common.message.contextual.MessageValidator
 import com.github.rinacm.sayaka.common.message.contextual.WrappedExecutor
@@ -25,7 +26,7 @@ annotation class Validator(val validatorClass: KClass<out MessageValidator>, @La
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class WithAuthorize(val authority: Authority)
+annotation class WithPrivilege(val privilege: Privilege)
 
 enum class RespondingType {
     WHISPER, GROUP
@@ -47,6 +48,7 @@ enum class TriggerPoint {
     STARTUP, BEFORE_CLOSED
 }
 
+@Suppress("unused")
 enum class TriggerPriority {
     HIGHEST, HIGH, NORMAL, LOW, LOWEST
 }
