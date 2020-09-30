@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.MessageEvent
 
 @Contextual(SwitchPluginEnabledCommandTranslator::class, SwitchPluginEnabledCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
-@Validator(RegexValidator::class, "\\w+ (disable|enable)")
+@Validator(RegexValidator::class, regex = "\\w+ (disable|enable)")
 @WithPrivilege(Privilege.ADMINISTRATOR)
 class SwitchPluginEnabledCommand(override val messageEvent: MessageEvent, val name: String, val enable: Boolean) : Command {
     companion object Key : Command.Key<SwitchPluginEnabledCommand> {

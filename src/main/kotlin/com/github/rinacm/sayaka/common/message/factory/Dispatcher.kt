@@ -37,7 +37,7 @@ interface Dispatcher {
             return TypedSubclassesScanner.markedMap[Dispatcher::class]
                 ?.filter { it.companionObjectInstance is Key<*> }
                 ?.map { it.companionObjectInstance as Key<*> }
-                ?.first { it.match == name }
+                ?.firstOrNull { it.match == name }
         }
 
     }

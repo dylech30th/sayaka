@@ -9,6 +9,6 @@ import net.mamoe.mirai.message.data.MessageChain
 class ShuffleRankOptionCommandHandler : CommandHandler<ShuffleRankOptionCommand> {
     override suspend fun process(command: ShuffleRankOptionCommand): List<MessageChain>? {
         RankingEmitter.getOrCreateByContact(command.messageEvent.subject).shuffle()
-        return "成功随机到${RankingEmitter.getOrCreateByContact(command.messageEvent.subject).current.first}的TAG".asSingleMessageChainList()
+        return "成功将榜单选项随机为${RankingEmitter.getOrCreateByContact(command.messageEvent.subject).current.first}".asSingleMessageChainList()
     }
 }

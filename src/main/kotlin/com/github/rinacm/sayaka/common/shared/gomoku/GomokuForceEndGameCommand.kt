@@ -12,7 +12,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(MandatoryEndGameCommandTranslator::class, MandatoryEndGameCommandHandler::class)
 @PluginOwnership(GomokuPlugin::class)
 @Responding(RespondingType.GROUP)
-@Validator(RegexValidator::class, QQ_ID_REGEX)
+@Validator(RegexValidator::class, regex = QQ_ID_REGEX)
 data class GomokuForceEndGameCommand(val groupQQId: String, override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<GomokuForceEndGameCommand> {
         override val match: String = "/ef"

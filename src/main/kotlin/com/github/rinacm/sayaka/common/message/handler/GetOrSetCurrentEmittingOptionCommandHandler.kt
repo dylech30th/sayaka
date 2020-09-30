@@ -17,7 +17,7 @@ class GetOrSetCurrentEmittingOptionCommandHandler : CommandHandler<GetOrSetCurre
         }
         when (command.optionKey) {
             "rank" -> {
-                emitter.current = RankOption.valueOf(command.optionValue!!) to emitter.current.second
+                emitter.current = RankOption.valueOf(command.optionValue!!.toUpperCase()) to emitter.current.second
                 emitter.cache.clear()
             }
             "date" -> {

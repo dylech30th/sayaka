@@ -2,6 +2,7 @@ package com.github.rinacm.sayaka.common.message.factory
 
 import com.github.rinacm.sayaka.common.init.BotContext
 import com.github.rinacm.sayaka.common.message.contextual.WrappedExecutor
+import com.github.rinacm.sayaka.common.message.error.AuthorizeException
 import com.github.rinacm.sayaka.common.message.error.IrrelevantMessageException
 import com.github.rinacm.sayaka.common.message.error.PipelineException
 import com.github.rinacm.sayaka.common.shared.Command
@@ -49,8 +50,8 @@ open class DefaultDispatcherImpl : Dispatcher {
         // the Command class
         if (cmdClass == null || !CommandFactory.checkAccess(cmdClass, this) || !thresholding())
             throws<IrrelevantMessageException>()
-        val contextual = CommandFactory.getContextual(cmdClass)
         CommandFactory.validate(this, cmdClass, cmdClass.annotation())
+        val contextual = CommandFactory.getContextual(cmdClass)
         @Suppress("UNCHECKED_CAST")
         return (contextual.translator.createInstance() as WrappedExecutor<MessageEvent, Command>).executeWrapped(this)
     }
@@ -64,6 +65,7 @@ open class DefaultDispatcherImpl : Dispatcher {
     override suspend fun MessageEvent.dispatchError(exception: Exception) {
         when {
             exception is IrrelevantMessageException || exception is PipelineException && exception.e is IrrelevantMessageException -> return
+            exception is AuthorizeException -> subject.sendMessage(exception.message)
             else -> {
                 val path = BotContext.getCrashReportPath()
                 @Suppress("DuplicatedCode")

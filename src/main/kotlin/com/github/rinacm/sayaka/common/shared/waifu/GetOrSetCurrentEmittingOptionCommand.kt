@@ -6,11 +6,12 @@ import com.github.rinacm.sayaka.common.message.validation.RegexValidator
 import com.github.rinacm.sayaka.common.plugin.RandomWaifuPlugin
 import com.github.rinacm.sayaka.common.shared.Command
 import com.github.rinacm.sayaka.common.util.*
+import com.github.rinacm.sayaka.waifu.core.RankOption
 import net.mamoe.mirai.message.MessageEvent
 
 @Contextual(GetOrSetCurrentEmittingOptionCommandTranslator::class, GetOrSetCurrentEmittingOptionCommandHandler::class)
 @PluginOwnership(RandomWaifuPlugin::class)
-@Validator(RegexValidator::class, "((rank day|week|month|day_male|day_female|week_original|week_rookie)|(date \\d{4}-\\d{2}-\\d{2}))?")
+@Validator(RegexValidator::class, regex = "((rank (day|week|month|day_male|day_female|week_original|week_rookie))|(date \\d{4}-\\d{2}-\\d{2}))?")
 class GetOrSetCurrentEmittingOptionCommand(override val messageEvent: MessageEvent, val optionKey: String?, val optionValue: String?) : Command {
     companion object Key : Command.Key<GetOrSetCurrentEmittingOptionCommand> {
         override val match: String = "/waifuoption"
@@ -21,12 +22,12 @@ class GetOrSetCurrentEmittingOptionCommand(override val messageEvent: MessageEve
                 Placeholder(
                     """
                         ${Placeholder("rank", "date", option = PlaceholderOption.MUTUALLY_EXCLUSIVE)} ${
-                        Placeholder(
-                            Placeholder("rank_option_value"),
-                            Placeholder("date_value"),
-                            option = PlaceholderOption.MUTUALLY_EXCLUSIVE
-                        )
-                    }
+                            Placeholder(
+                                Placeholder(*RankOption.values().map(RankOption::alias).toTypedArray(), option = PlaceholderOption.MUTUALLY_EXCLUSIVE),
+                                Placeholder("date_value"),
+                                option = PlaceholderOption.MUTUALLY_EXCLUSIVE
+                            )
+                        }
                     """.trimIndent(),
                     option = PlaceholderOption.OPTIONAL
                 )

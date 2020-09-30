@@ -23,6 +23,7 @@ class GetRandomWaifuCommandHandler : CommandHandler<GetRandomWaifuCommand> {
             val illustration = emit()
             command.messageEvent.subject.sendMessage("正在下载色图...")
             val file = illustration.download()
+            val image = file.uploadAsImage(command.messageEvent.subject)
             return buildMessageChain {
                 add(file.uploadAsImage(command.messageEvent.subject))
                 add(buildString {

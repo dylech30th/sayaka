@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.MessageEvent
 
 @Contextual(GetGomokuCreditCommandTranslator::class, GetGomokuCreditCommandHandler::class)
 @PluginOwnership(GomokuPlugin::class)
-@Validator(RegexValidator::class, QQ_ID_REGEX)
+@Validator(RegexValidator::class, regex = QQ_ID_REGEX)
 data class GetGomokuCreditCommand(val playerQQId: String, override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<GetGomokuCreditCommand> {
         override val match: String = "/gc"

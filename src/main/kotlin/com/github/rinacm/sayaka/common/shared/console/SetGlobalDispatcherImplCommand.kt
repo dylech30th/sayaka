@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Contextual(SetGlobalDispatcherImplCommandTranslator::class, SetGlobalDispatcherImplCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
 @WithPrivilege(Privilege.ADMINISTRATOR)
-@Validator(RegexValidator::class, "[a-zA-Z]+")
+@Validator(RegexValidator::class, regex = "[a-zA-Z]+")
 class SetGlobalDispatcherImplCommand(override val messageEvent: MessageEvent, val name: String) : Command {
     companion object Key : Command.Key<SetGlobalDispatcherImplCommand> {
         override val match: String = "/dispatchBy"

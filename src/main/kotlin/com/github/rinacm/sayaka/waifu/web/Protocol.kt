@@ -1,6 +1,6 @@
 package com.github.rinacm.sayaka.waifu.web
 
-import com.github.rinacm.sayaka.waifu.urlBuilder
+import com.github.rinacm.sayaka.common.util.urlBuilder
 import io.ktor.http.*
 
 val dnsServer = urlBuilder {

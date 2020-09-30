@@ -1,7 +1,7 @@
 package com.github.rinacm.sayaka.waifu.web
 
-import com.github.rinacm.sayaka.waifu.md5
-import com.github.rinacm.sayaka.waifu.parameter
+import com.github.rinacm.sayaka.common.util.md5
+import com.github.rinacm.sayaka.common.util.parameter
 import com.github.rinacm.sayaka.waifu.response.TokenResponse
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*

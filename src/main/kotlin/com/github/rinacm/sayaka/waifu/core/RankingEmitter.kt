@@ -9,11 +9,13 @@ import com.github.rinacm.sayaka.waifu.web.APP_API
 import com.github.rinacm.sayaka.waifu.web.HttpClients
 import com.github.rinacm.sayaka.waifu.web.Session
 import io.ktor.client.request.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.contact.Contact
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.concurrent.CompletableFuture
 import kotlin.properties.Delegates
 
 class RankingEmitter : PixivEmitter<Pair<RankOption, String>> {
@@ -28,13 +30,13 @@ class RankingEmitter : PixivEmitter<Pair<RankOption, String>> {
         }
     }
 
-    override var current: Pair<RankOption, String> = RankOption.DAY to minusLocalDateNowString()
+    override var current: Pair<RankOption, String> = RankOption.DAY_MALE to minusLocalDateNowString()
     override val cache: MutableList<Illustration> = mutableListOf()
 
     var coolDown: Boolean by Delegates.observable(false) { _, _, newValue ->
         if (newValue) {
-            CompletableFuture.runAsync {
-                Thread.sleep(5)
+            GlobalScope.launch {
+                delay(3000)
                 coolDown = false
             }
         }

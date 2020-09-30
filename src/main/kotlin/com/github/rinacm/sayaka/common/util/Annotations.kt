@@ -22,7 +22,7 @@ annotation class Contextual(val translator: KClass<out WrappedExecutor<*, *>>, v
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class Validator(val validatorClass: KClass<out MessageValidator>, @Language("RegExp") val regex: String = "")
+annotation class Validator(vararg val validatorClass: KClass<out MessageValidator>, @Language("RegExp") val regex: String = "")
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)

@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.MessageEvent
 
 @Contextual(GetDispatchersMessageCommandTranslator::class, GetDispatchersMessageCommandHandler::class)
 @PluginOwnership(ConsolePlugin::class)
-@Validator(RegexValidator::class, "(global)?")
+@Validator(RegexValidator::class, regex = "(global)?")
 class GetDispatchersMessageCommand(override val messageEvent: MessageEvent, val global: Boolean = false) : Command {
     companion object Key : Command.Key<GetDispatchersMessageCommand> {
         override val match: String = "/dispatchers"

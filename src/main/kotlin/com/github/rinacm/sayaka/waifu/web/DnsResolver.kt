@@ -1,11 +1,7 @@
 package com.github.rinacm.sayaka.waifu.web
 
-import com.github.rinacm.sayaka.common.util.buildListImmutable
-import com.github.rinacm.sayaka.common.util.buildListMutable
+import com.github.rinacm.sayaka.common.util.*
 import com.github.rinacm.sayaka.waifu.response.DnsResponse
-import com.github.rinacm.sayaka.waifu.run
-import com.github.rinacm.sayaka.waifu.threadLocalOf
-import com.github.rinacm.sayaka.waifu.urlBuilder
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
@@ -86,7 +82,7 @@ abstract class DnsResolver : Dns {
     }
 
     private fun cache(hostname: String, ips: List<InetAddress>) {
-        dnsCache.run {
+        dnsCache.runAlso {
             if (hostname !in keys || this[hostname].isNullOrEmpty()) {
                 this[hostname] = ips
             }
@@ -94,8 +90,8 @@ abstract class DnsResolver : Dns {
     }
 
     private fun fromCache(hostname: String): List<InetAddress>? {
-        return if (dnsCache.run { hostname in keys }) {
-            dnsCache.run { this[hostname] }
+        return if (dnsCache.runAlso { hostname in keys }) {
+            dnsCache.runAlso { this[hostname] }
         } else null
     }
 

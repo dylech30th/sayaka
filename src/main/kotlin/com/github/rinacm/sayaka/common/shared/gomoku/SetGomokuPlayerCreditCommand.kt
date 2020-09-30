@@ -11,7 +11,7 @@ import net.mamoe.mirai.message.MessageEvent
 @WithPrivilege(Privilege.ADMINISTRATOR)
 @Contextual(SetGomokuPlayerCreditCommandTranslator::class, SetGomokuPlayerCreditCommandHandler::class)
 @PluginOwnership(GomokuPlugin::class)
-@Validator(RegexValidator::class, "$QQ_ID_REGEX $QQ_ID_REGEX")
+@Validator(RegexValidator::class, regex = "$QQ_ID_REGEX $QQ_ID_REGEX")
 data class SetGomokuPlayerCreditCommand(val qqId: String, val amount: String, override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<SetGomokuPlayerCreditCommand> {
         override val match: String = "/gs"

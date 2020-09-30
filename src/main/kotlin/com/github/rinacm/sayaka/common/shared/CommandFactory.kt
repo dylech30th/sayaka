@@ -1,6 +1,7 @@
 package com.github.rinacm.sayaka.common.shared
 
-import com.github.rinacm.sayaka.common.message.validation.AuthorityValidator
+import com.github.rinacm.sayaka.common.init.BotContext
+import com.github.rinacm.sayaka.common.message.error.AuthorizeException
 import com.github.rinacm.sayaka.common.message.validation.PurePlainTextValidator
 import com.github.rinacm.sayaka.common.message.validation.RegexValidator
 import com.github.rinacm.sayaka.common.plugin.ExcludeType
@@ -69,6 +70,12 @@ object CommandFactory {
         return this.annotations.filterIsInstance<WithPrivilege>().firstOrNull()?.privilege
     }
 
+    /**
+     * There're totally three checking steps:
+     * 1. check the command is marked as [PermanentlyDisable]
+     * 2. check the command's plugin is enabled and does not block the sender
+     * 3. check the command's [Responding] comfort the sender
+     */
     fun checkAccess(cmdClass: KClass<out Command>, messageEvent: MessageEvent): Boolean {
         val key = Plugin.getPluginKeyByAnnotation(cmdClass.annotations.singleIsInstance())
         return !isPermanentlyDisabled(cmdClass) && key != null && key.enabled && checkExcludes(key, messageEvent) && canRespond(cmdClass, messageEvent)
@@ -97,12 +104,26 @@ object CommandFactory {
 
     suspend fun validate(raw: MessageEvent, cmdClass: KClass<out Command>, annotation: Validator) {
         val clazz = annotation.validatorClass
-        val primaryConstructor = clazz.primaryConstructor!!
-        when (clazz) {
-            RegexValidator::class, AuthorityValidator::class -> {
-                primaryConstructor.call(annotation.regex, cmdClass).executeWrapped(raw)
+        for (c in clazz) {
+            val primaryConstructor = c.primaryConstructor!!
+            when (clazz) {
+                RegexValidator::class -> primaryConstructor.call(annotation.regex, cmdClass).executeWrapped(raw)
+                PurePlainTextValidator::class -> primaryConstructor.call(cmdClass).executeWrapped(raw)
             }
-            PurePlainTextValidator::class -> primaryConstructor.call(cmdClass).executeWrapped(raw)
+        }
+        // validate privilege
+        when (cmdClass.annotations.filterIsInstance<WithPrivilege>().firstOrNull()?.privilege) {
+            Privilege.SUPERUSER -> {
+                if (raw.sender.id.toString() != BotContext.getOwner()) {
+                    throw AuthorizeException(Privilege.SUPERUSER)
+                }
+            }
+            Privilege.ADMINISTRATOR -> {
+                if (raw.sender.id.toString() !in BotContext.getAdmins()) {
+                    throw AuthorizeException(Privilege.ADMINISTRATOR)
+                }
+            }
+            else -> return
         }
     }
 }

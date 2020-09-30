@@ -1,5 +1,6 @@
 package com.github.rinacm.sayaka.common.message.handler
 
+import com.github.rinacm.sayaka.common.init.BotContext
 import com.github.rinacm.sayaka.common.message.contextual.CommandHandler
 import com.github.rinacm.sayaka.common.plugin.Plugin
 import com.github.rinacm.sayaka.common.shared.console.SetPluginExcludeCommand
@@ -11,6 +12,9 @@ class SetPluginExcludeCommandHandler : CommandHandler<SetPluginExcludeCommand> {
         val key = Plugin.getPluginKeyByName(command.name)
         if (key != null) {
             val set = key.excludes[command.id]
+            if (command.id == BotContext.getOwner()) {
+                return "Bot的实际持有者不能被加入到黑名单中".asSingleMessageChainList()
+            }
             if (set == null) {
                 key.excludes[command.id] = mutableSetOf(command.excludeType)
             } else set.add(command.excludeType)

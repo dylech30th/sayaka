@@ -15,7 +15,7 @@ import net.mamoe.mirai.message.MessageEvent
 @Validator(PurePlainTextValidator::class)
 class GetRandomWaifuCommand(override val messageEvent: MessageEvent) : Command {
     companion object Key : Command.Key<GetRandomWaifuCommand> {
-        override val match: String = "/来点色图"
+        override val match: String = "/setu"
         override val description: String = "无情的随机涩图机器"
     }
 }
