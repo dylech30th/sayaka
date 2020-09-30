@@ -12,7 +12,6 @@ pixiv.txt
 crash-report/*.txt
 *.json
 *.jar
-gomoku/
 pixiv/
 
 # User-specific stuff
