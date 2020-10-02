@@ -1,29 +1,28 @@
 package com.github.rinacm.sayaka.common.message.handler
 
 import com.github.rinacm.sayaka.common.message.contextual.CommandHandler
-import com.github.rinacm.sayaka.common.shared.waifu.GetRandomWaifuCommand
+import com.github.rinacm.sayaka.common.shared.pixiv.GetRandomRankingCommand
 import com.github.rinacm.sayaka.common.util.asSingleMessageChainList
-import com.github.rinacm.sayaka.waifu.core.RankingEmitter
+import com.github.rinacm.sayaka.pixiv.core.RankingEmitter
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.uploadAsImage
 
-class GetRandomWaifuCommandHandler : CommandHandler<GetRandomWaifuCommand> {
-    override suspend fun process(command: GetRandomWaifuCommand): List<MessageChain>? {
+class GetRandomRankingCommandHandler : CommandHandler<GetRandomRankingCommand> {
+    override suspend fun process(command: GetRandomRankingCommand): List<MessageChain>? {
         with(RankingEmitter.getOrCreateByContact(command.messageEvent.subject)) {
             if (coolDown) {
-                return "命令正在冷却过程中，冷却时间为5秒".asSingleMessageChainList()
+                return "命令正在冷却过程中，冷却时间为3秒".asSingleMessageChainList()
             }
             coolDown = true
             if (cache.isEmpty()) {
-                command.messageEvent.subject.sendMessage("正在获取新的色图...")
+                command.messageEvent.subject.sendMessage("正在获取新的榜单...")
                 construct()
-                command.messageEvent.subject.sendMessage("新的色图获取完成，正在随机...")
+                command.messageEvent.subject.sendMessage("榜单获取完成，正在随机...")
             }
             val illustration = emit()
-            command.messageEvent.subject.sendMessage("正在下载色图...")
+            command.messageEvent.subject.sendMessage("正在下载图片...")
             val file = illustration.download()
-            val image = file.uploadAsImage(command.messageEvent.subject)
             return buildMessageChain {
                 add(file.uploadAsImage(command.messageEvent.subject))
                 add(buildString {

@@ -26,6 +26,7 @@ interface Dispatcher {
 
     companion object {
         var Global: Dispatcher = DefaultDispatcherImpl.instance
+        var Sleeping: Boolean = false
 
         fun availableDispatchers(): List<Key<*>>? {
             return TypedSubclassesScanner.markedMap[Dispatcher::class]
@@ -42,11 +43,11 @@ interface Dispatcher {
 
     }
 
-    suspend fun MessageEvent.translateMessage(): Command
+    suspend fun translateMessage(messageEvent: MessageEvent): Command
 
-    suspend fun <T : Command> MessageEvent.dispatchMessage(command: T)
+    suspend fun <T : Command> dispatchMessage(messageEvent: MessageEvent, command: T)
 
-    suspend fun MessageEvent.dispatchError(exception: Exception)
+    suspend fun dispatchError(messageEvent: MessageEvent, exception: Exception)
 
-    suspend fun MessageEvent.thresholding(): Boolean
+    suspend fun thresholding(messageEvent: MessageEvent): Boolean
 }

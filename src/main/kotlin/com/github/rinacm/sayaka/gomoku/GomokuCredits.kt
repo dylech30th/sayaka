@@ -33,7 +33,6 @@ object GomokuCredit {
 
 
     @TriggerOn(TriggerPoint.BEFORE_CLOSED)
-    @JvmStatic
     fun save() {
         if (!File.exists(fileName)) {
             File.create(fileName)
@@ -51,7 +50,6 @@ object GomokuCredit {
     }
 
     @TriggerOn(TriggerPoint.STARTUP)
-    @JvmStatic
     fun load() {
         if (File.exists(fileName)) {
             gomokuPlayerCredits = File.read(fileName).get().fromJson()

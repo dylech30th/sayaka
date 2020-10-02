@@ -8,6 +8,8 @@ import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.closeAndJoin
+import net.mamoe.mirai.join
+import net.mamoe.mirai.utils.SilentLogger
 
 object BotFactory {
     private lateinit var bot: Bot
@@ -19,11 +21,18 @@ object BotFactory {
         }
     }
 
+    suspend fun runAndJoin(block: Bot.() -> Unit) {
+        block(getInstance())
+        getInstance().join()
+    }
+
     fun login(qq: Long, password: String) {
         synchronized(this) {
             requires<RuntimeException>(!BotFactory::bot.isInitialized, "the bot has been initialized")
             runBlocking {
-                bot = Bot(qq, password) { randomDeviceInfo() }.alsoLogin()
+                bot = Bot(qq, password) {
+                    randomDeviceInfo()
+                }.alsoLogin()
             }
         }
     }

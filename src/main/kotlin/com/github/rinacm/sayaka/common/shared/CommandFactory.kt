@@ -11,6 +11,7 @@ import com.github.rinacm.sayaka.common.util.reflector.TypedSubclassesScanner
 import net.mamoe.mirai.contact.Friend
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
+import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.MessageEvent
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -27,17 +28,21 @@ object CommandFactory {
      * by [cmd] as the match key, if matches found then put them into a [commandKeywordToCommandClassCache] to
      * improve the query speed
      */
-    fun lookup(cmd: String): KClass<out Command>? {
-        if (cmd in commandKeywordToCommandClassCache.keys) {
-            return commandKeywordToCommandClassCache[cmd]!!
+    fun lookup(cmd: String, user: User? = null): KClass<out Command>? {
+        var key = cmd
+        if (user != null) {
+            CommandMapping.findMappingCommandString(user, key)?.let { key = it }
+        }
+        if (key in commandKeywordToCommandClassCache.keys) {
+            return commandKeywordToCommandClassCache[key]!!
         }
         val obj = TypedSubclassesScanner.markedMap[Command::class]
-            ?.firstOrNull { tryMatch(cmd, it.companionObjectInstance as Command.Key<*>?) }
+            ?.firstOrNull { tryMatch(key, it.companionObjectInstance as Command.Key<*>?) }
             ?.companionObject
             ?: return null
         @Suppress("UNCHECKED_CAST")
         return (obj.java.declaringClass.kotlin as KClass<out Command>).apply {
-            commandKeywordToCommandClassCache[cmd] = this
+            commandKeywordToCommandClassCache[key] = this
         }
     }
 

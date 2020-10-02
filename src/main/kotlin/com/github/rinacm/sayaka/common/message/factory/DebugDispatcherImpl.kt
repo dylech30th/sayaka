@@ -16,13 +16,13 @@ class DebugDispatcherImpl : DefaultDispatcherImpl() {
         override val instance = DebugDispatcherImpl()
     }
 
-    override suspend fun MessageEvent.dispatchError(exception: Exception) {
+    override suspend fun dispatchError(messageEvent: MessageEvent, exception: Exception) {
         when {
             exception is IrrelevantMessageException || exception is PipelineException && exception.e is IrrelevantMessageException -> return
             else -> {
                 @Suppress("DuplicatedCode")
-                subject.sendMessage(buildString {
-                    appendLine("在处理由${senderName}(${sender.id})发来的${message.content}消息时出现了异常")
+                messageEvent.subject.sendMessage(buildString {
+                    appendLine("在处理由${messageEvent.senderName}(${messageEvent.sender.id})发来的${messageEvent.message.content}消息时出现了异常")
                     if (exception is PipelineException) {
                         appendLine("异常捕获于: ${exception.errorStage.localizedName}(${exception.errorStage})阶段，日志如下:")
                     }

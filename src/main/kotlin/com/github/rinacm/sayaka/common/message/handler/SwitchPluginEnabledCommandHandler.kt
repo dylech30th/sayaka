@@ -14,12 +14,14 @@ class SwitchPluginEnabledCommandHandler : CommandHandler<SwitchPluginEnabledComm
             return "不能禁用控制台插件".asSingleMessageChainList()
         }
         if (clazz != null) {
-            return if (clazz.enabled != command.enable) {
+            return (if (clazz.enabled != command.enable) {
                 clazz.enabled = command.enable
                 if (command.enable)
-                    "成功启用${clazz.canonicalizeName()}插件".asSingleMessageChainList()
-                else "成功禁用${clazz.canonicalizeName()}插件".asSingleMessageChainList()
-            } else "${clazz.canonicalizeName()}的enabled属性已经是${command.enable}".asSingleMessageChainList()
+                    "成功启用${clazz.canonicalizeName()}插件"
+                else "成功禁用${clazz.canonicalizeName()}插件"
+            } else {
+                "${clazz.canonicalizeName()}的enabled属性已经是${command.enable}"
+            }).asSingleMessageChainList()
         }
         return "未找到${command.name}".asSingleMessageChainList()
     }

@@ -57,15 +57,6 @@ enum class TriggerPriority {
  * This annotation mark a method as dynamically invokable, the marked method will be invoked
  * at the runtime automatically based on [priority] and [triggerPoint]
  *
- * It acts directly on the method therefore you must mark the method as [JvmStatic]
- * if it is declared in an **`object`**
- * ```
- * object Singleton {
- *     @TriggerOn(TriggerPoint.STARTUP, TriggerPriority.HIGHEST)
- *     @JvmStatic
- *     fun autoInvokableMethod() { ... }
- * }
- * ```
  * @param triggerPoint indicates the when the method should be invoked
  * @param priority indicates the invoke priority, the method with higher [priority]
  *        will be executed earlier than others

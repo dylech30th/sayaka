@@ -10,10 +10,10 @@ class RevokeAdministratorCommandHandler : CommandHandler<RevokeAdministratorComm
     override suspend fun process(command: RevokeAdministratorCommand): List<MessageChain>? {
         return if (command.qqId.toLongOrNull() != null) {
             when {
-                command.qqId == BotContext.getOwner() -> "Bot的持有者(Owner)不可以被移除出管理员列表".asSingleMessageChainList()
-                BotContext.removeAdmin(command.qqId) -> "成功将${command.qqId}移出管理员列表".asSingleMessageChainList()
-                else -> "${command.qqId}不在管理员列表中".asSingleMessageChainList()
-            }
+                command.qqId == BotContext.getOwner() -> "Bot的持有者(Owner)不可以被移除出管理员列表"
+                BotContext.removeAdmin(command.qqId) -> "成功将${command.qqId}移出管理员列表"
+                else -> "${command.qqId}不在管理员列表中"
+            }.asSingleMessageChainList()
         } else "参数格式错误，必须是一个正确的QQ号码".asSingleMessageChainList()
     }
 }

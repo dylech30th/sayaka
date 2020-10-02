@@ -2,14 +2,21 @@
 
 package com.github.rinacm.sayaka.common.util
 
+import com.github.rinacm.sayaka.common.message.factory.Dispatcher
 import com.google.common.collect.Multimap
 import com.google.gson.Gson
 import io.ktor.http.*
+import kotlinx.coroutines.launch
+import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.event.subscribe
+import net.mamoe.mirai.event.subscribeMessages
+import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.uploadAsImage
 import org.intellij.lang.annotations.Language
 import java.io.File
+import java.lang.reflect.Member
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,6 +38,12 @@ fun String.toAbsolutePath(): Path = toPath().toAbsolutePath()
 fun Path.mkdirs() = File(toString()).mkdirs()
 
 fun durationNow(): Duration = Duration.ofMillis(System.currentTimeMillis())
+
+val Member.kotlinDeclaringClass get() = declaringClass.kotlin
+
+fun <T: R, R> T.runIf(boolean: Boolean, block: T.() -> R): R {
+    return if (boolean) block() else this
+}
 
 fun <T> buildListImmutable(block: MutableList<T>.() -> Unit): List<T> {
     return mutableListOf<T>().apply { block(this) }
@@ -101,12 +114,28 @@ fun Message.asSingleMessageChainList(): List<MessageChain> {
     return asMessageChain().toSingleList()
 }
 
+fun Bot.subscribeAlwaysUnderGlobalDispatcherSuspended(block: suspend Dispatcher.(MessageEvent) -> Unit) {
+    subscribeMessages {
+        always {
+            with(Dispatcher.Global) {
+                launch {
+                    block(this@always)
+                }
+            }
+        }
+    }
+}
+
 fun <T> T.toSingleList(): List<T> {
     return listOf(this)
 }
 
 inline fun <reified E : Exception> requires(value: Boolean, message: String? = null) {
     if (!value) throws<E>(message)
+}
+
+fun <T, R> notEquals(second: T, transform: (T) -> R): (T) -> Boolean {
+    return { transform(it) != transform(second) }
 }
 
 inline fun <reified E : Exception> throws(message: String? = null): Nothing {

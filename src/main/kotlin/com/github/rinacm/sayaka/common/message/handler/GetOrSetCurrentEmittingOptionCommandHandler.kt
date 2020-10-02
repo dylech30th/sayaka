@@ -1,10 +1,10 @@
 package com.github.rinacm.sayaka.common.message.handler
 
 import com.github.rinacm.sayaka.common.message.contextual.CommandHandler
-import com.github.rinacm.sayaka.common.shared.waifu.GetOrSetCurrentEmittingOptionCommand
+import com.github.rinacm.sayaka.common.shared.pixiv.GetOrSetCurrentEmittingOptionCommand
 import com.github.rinacm.sayaka.common.util.asSingleMessageChainList
-import com.github.rinacm.sayaka.waifu.core.RankOption
-import com.github.rinacm.sayaka.waifu.core.RankingEmitter
+import com.github.rinacm.sayaka.pixiv.core.RankOption
+import com.github.rinacm.sayaka.pixiv.core.RankingEmitter
 import net.mamoe.mirai.message.data.MessageChain
 
 class GetOrSetCurrentEmittingOptionCommandHandler : CommandHandler<GetOrSetCurrentEmittingOptionCommand> {
@@ -16,13 +16,9 @@ class GetOrSetCurrentEmittingOptionCommandHandler : CommandHandler<GetOrSetCurre
             return "参数不全".asSingleMessageChainList()
         }
         when (command.optionKey) {
-            "rank" -> {
-                emitter.current = RankOption.valueOf(command.optionValue!!.toUpperCase()) to emitter.current.second
-                emitter.cache.clear()
-            }
-            "date" -> {
-                emitter.current = emitter.current.first to command.optionValue!!
-            }
+            "rank" -> emitter.setRank(RankOption.valueOf(command.optionValue!!.toUpperCase()))
+            "date" -> emitter.current = emitter.current.first to command.optionValue!!
+            "shuffle" -> emitter.shuffleMode = RankingEmitter.ShuffleMode.of(command.optionValue!!) ?: return "参数只能是{seq|rnd}".asSingleMessageChainList()
         }
         return "成功将${command.optionKey}的值设置为${command.optionValue}".asSingleMessageChainList()
     }

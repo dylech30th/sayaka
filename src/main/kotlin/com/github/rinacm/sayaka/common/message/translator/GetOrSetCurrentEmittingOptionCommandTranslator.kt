@@ -1,7 +1,7 @@
 package com.github.rinacm.sayaka.common.message.translator
 
 import com.github.rinacm.sayaka.common.message.contextual.AbstractMessageTranslator
-import com.github.rinacm.sayaka.common.shared.waifu.GetOrSetCurrentEmittingOptionCommand
+import com.github.rinacm.sayaka.common.shared.pixiv.GetOrSetCurrentEmittingOptionCommand
 import com.github.rinacm.sayaka.common.util.throws
 import net.mamoe.mirai.message.MessageEvent
 

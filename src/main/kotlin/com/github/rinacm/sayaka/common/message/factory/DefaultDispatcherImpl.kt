@@ -8,6 +8,7 @@ import com.github.rinacm.sayaka.common.message.error.PipelineException
 import com.github.rinacm.sayaka.common.shared.Command
 import com.github.rinacm.sayaka.common.shared.CommandFactory
 import com.github.rinacm.sayaka.common.shared.CommandFactory.toRawCommand
+import com.github.rinacm.sayaka.common.shared.RawCommand
 import com.github.rinacm.sayaka.common.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -39,38 +40,52 @@ open class DefaultDispatcherImpl : Dispatcher {
     // ========================================================================
     private val blacklist: MutableSet<User> = mutableSetOf()
 
-    override suspend fun MessageEvent.translateMessage(): Command {
+    /**
+     * Command dispatching system cannot work out with any command when [Dispatcher.Sleeping] is on
+     * we simply check if command is /awake or not to decide whether we need to wake the Bot up
+     */
+    private suspend fun MessageEvent.interceptAwaken(cmd: RawCommand) {
+        if (cmd.name == "/awake" && cmd.parameters.isEmpty()) {
+            Dispatcher.Sleeping = false
+            subject.sendMessage("成功唤醒Bot")
+        } else if (Dispatcher.Sleeping) {
+            throws<IrrelevantMessageException>()
+        }
+    }
+
+    override suspend fun translateMessage(messageEvent: MessageEvent): Command {
         // extract the PlainText message in the messageEvent
-        val plainTextMessage = message[PlainText]?.content ?: throws<IrrelevantMessageException>()
+        val plainTextMessage = messageEvent.message[PlainText]?.content ?: throws<IrrelevantMessageException>()
         // attempts to translate the plainTextMessage into raw command
         val raw = plainTextMessage.toRawCommand()
-        val cmdClass = CommandFactory.lookup(raw.name)
+        messageEvent.interceptAwaken(raw)
+        val cmdClass = CommandFactory.lookup(raw.name, messageEvent.sender)
         // if the command is marked as PermanentlyDisable or RespondingType does not comfort MessageEvent
         // invoke thresholding before the null checking of cmdClass to handle the cases which cannot located
         // the Command class
-        if (cmdClass == null || !CommandFactory.checkAccess(cmdClass, this) || !thresholding())
+        if (cmdClass == null || !CommandFactory.checkAccess(cmdClass, messageEvent) || !thresholding(messageEvent))
             throws<IrrelevantMessageException>()
-        CommandFactory.validate(this, cmdClass, cmdClass.annotation())
+        CommandFactory.validate(messageEvent, cmdClass, cmdClass.annotation())
         val contextual = CommandFactory.getContextual(cmdClass)
         @Suppress("UNCHECKED_CAST")
-        return (contextual.translator.createInstance() as WrappedExecutor<MessageEvent, Command>).executeWrapped(this)
+        return (contextual.translator.createInstance() as WrappedExecutor<MessageEvent, Command>).executeWrapped(messageEvent)
     }
 
-    override suspend fun <T : Command> MessageEvent.dispatchMessage(command: T) {
+    override suspend fun <T : Command> dispatchMessage(messageEvent: MessageEvent, command: T) {
         @Suppress("UNCHECKED_CAST")
         val handler = CommandFactory.getContextual(command::class).handler.createInstance() as WrappedExecutor<T, Unit>
         handler.executeWrapped(command)
     }
 
-    override suspend fun MessageEvent.dispatchError(exception: Exception) {
+    override suspend fun dispatchError(messageEvent: MessageEvent, exception: Exception) {
         when {
             exception is IrrelevantMessageException || exception is PipelineException && exception.e is IrrelevantMessageException -> return
-            exception is AuthorizeException -> subject.sendMessage(exception.message)
+            exception is AuthorizeException -> messageEvent.subject.sendMessage(exception.message)
             else -> {
                 val path = BotContext.getCrashReportPath()
                 @Suppress("DuplicatedCode")
                 File.write(path.toAbsolutePath().toString(), buildString {
-                    appendLine("在处理由${senderName}(${sender.id})发来的${message.content}消息时出现了异常")
+                    appendLine("在处理由${messageEvent.senderName}(${messageEvent.sender.id})发来的${messageEvent.message.content}消息时出现了异常")
                     if (exception is PipelineException) {
                         appendLine("异常捕获于: ${exception.errorStage.localizedName}(${exception.errorStage})阶段，日志如下:")
                     }
@@ -79,8 +94,8 @@ open class DefaultDispatcherImpl : Dispatcher {
                     appendIndent(exception.stackTraceToString(), indentLevel = 2)
                 })
                 try {
-                    subject.sendMessage(buildString {
-                        appendLine("在处理由${senderName}(${sender.id})发来的${message.content}消息时出现了异常，异常信息已经写入${path.toAbsolutePath()}")
+                    messageEvent.subject.sendMessage(buildString {
+                        appendLine("在处理由${messageEvent.senderName}(${messageEvent.sender.id})发来的${messageEvent.message.content}消息时出现了异常，异常信息已经写入${path.toAbsolutePath()}")
                         appendLine("异常信息: $exception")
                         appendLine("由于: ${exception.cause?.toString()}")
                     })
@@ -90,10 +105,10 @@ open class DefaultDispatcherImpl : Dispatcher {
         }
     }
 
-    override suspend fun MessageEvent.thresholding(): Boolean {
-        with(sender) {
+    override suspend fun thresholding(messageEvent: MessageEvent): Boolean {
+        with(messageEvent.sender) {
             // if the sender is already in the blacklist
-            if (sender in blacklist) return false
+            if (messageEvent.sender in blacklist) return false
             // if sender is in the table
             if (this in messageTable.keys) {
                 val (times, startTime) = messageTable[this]!!
@@ -113,17 +128,17 @@ open class DefaultDispatcherImpl : Dispatcher {
                         launch(Dispatchers.IO) {
                             delay(Duration.ofMinutes(20).toMillis())
                             blacklist.remove(this@with)
-                            subject.sendMessage(buildMessageChain {
-                                if (sender is Member) {
-                                    add((sender as Member).at())
+                            messageEvent.subject.sendMessage(buildMessageChain {
+                                if (messageEvent.sender is Member) {
+                                    add((messageEvent.sender as Member).at())
                                 }
                                 add("你已经被移出黑名单")
                             })
                         }
                     }
-                    subject.sendMessage(buildMessageChain {
-                        if (sender is Member) {
-                            add((sender as Member).at())
+                    messageEvent.subject.sendMessage(buildMessageChain {
+                        if (messageEvent.sender is Member) {
+                            add((messageEvent.sender as Member).at())
                         }
                         add("你在四秒内发送了超过三条消息，已经被拉入黑名单，2分钟后将会解禁")
                     })
